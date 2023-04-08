@@ -1,0 +1,33 @@
+{
+  "name": "full-stack-open-2022-part3",
+  "version": "1.0.0",
+  "description": "Full-stack-open-Part3",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OlenaSakhno/Full-Stack-open-2022-Part3.git"
+  },
+  "keywords": [
+    "Full-stack",
+    "back-end",
+    "server",
+    "part3"
+  ],
+  "author": "Olena Sakhno",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OlenaSakhno/Full-Stack-open-2022-Part3/issues"
+  },
+  "homepage": "https://github.com/OlenaSakhno/Full-Stack-open-2022-Part3#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0"
+  }
+}
