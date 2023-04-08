@@ -7,11 +7,13 @@ const app = express();
 app.use(express.json());
 
 app.use(cors());
-app.use(
-  morgan(":method :url :status :res[content-length] - :response-time ms")
-);
 
-// morgan.token('type', function (req, res) { return req.headers['content-type'] })
+morgan.token("requestPOST", function (req, res) {
+  return JSON.stringify(req.body);
+});
+morgan.token("requestGETone", function (req, res) {
+  return `requested person=>${req.params.id}`;
+});
 
 let phones = [
   {
@@ -41,6 +43,11 @@ let phones = [
   },
 ];
 
+//app.use(morgan("tiny"));  // this will show logs for all routs
+const morganConfPOST =
+  ":method :url :status :res[content-length] - :response-time ms :requestPOST";
+const morganConfGETone =
+  ":method :url :status :res[content-length] - :response-time ms :requestGETone";
 app.get("/", (req, res) => {
   res.send("<h1>Hello World!</h1>");
 });
@@ -55,7 +62,7 @@ app.get("/api/info", (req, res) => {
       `Phonebook has info for ${phones.length} people` + `<p>${new Date()}<p>`
     );
 });
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", morgan(morganConfGETone), (req, res) => {
   const id = Number(req.params.id);
   console.log("id===", id);
   const phone = phones.find((phone) => phone.id === id);
@@ -70,7 +77,7 @@ app.delete("/api/persons/:id", (req, res) => {
   res.status(204).send(`record ${id} was deleted`).end();
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", morgan(morganConfPOST), (req, res) => {
   const body = req.body;
   console.log("body=>", body);
   if (body.name === "" || body.number === "") {
