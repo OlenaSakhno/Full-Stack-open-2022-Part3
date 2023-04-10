@@ -1,8 +1,0 @@
-fly.toml
-Dockerfile
-.dockerignore
-node_modules
-.git
-.env
-
-fly secrets set MONGODB_URI='mongodb+srv://olenasakhno:osakhno@cluster0.fcumclu.mongodb.net/FullStackOpen?retryWrites=true&w=majority'
