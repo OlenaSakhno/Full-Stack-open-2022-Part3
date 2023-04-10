@@ -5,7 +5,7 @@ if (process.argv.length < 3) {
   process.exit(1);
 }
 
-const password = process.argv[2];
+const password = process.argv[2]; // to take value from command line
 const name = process.argv[3];
 const phone = process.argv[4];
 
