@@ -4,7 +4,7 @@ var morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const Person = require("./models/person");
-const errorHandler = require("./middleware/errorHandler");
+// const errorHandler = require("./middleware/errorHandler");
 dotenv.config();
 const app = express();
 
@@ -18,6 +18,16 @@ morgan.token("requestPOST", function (req, res) {
 morgan.token("requestGETone", function (req, res) {
   return `requested person=>${req.params.id}`;
 });
+const errorHandler = (error, req, res, next) => {
+  console.error(error);
+  console.log("======", error.name);
+  if (error.name === "CastError") {
+    return res.status(400).send({ ERROR: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
+  }
+  next(error);
+};
 app.use(errorHandler); // this has to be the last loaded middleware.
 const morganConfPOST =
   ":method :url :status :res[content-length] - :response-time ms :requestPOST";
@@ -48,7 +58,7 @@ app.get(
     Person.findById(id)
       .then((person) => {
         if (person) res.json(person);
-        else res.status(404).send("The record does not exist").end();
+        else res.status(404).send("The record does not exist");
       })
       .catch((error) => next(error));
   }
@@ -62,7 +72,7 @@ app.delete("/api/persons/:id", (req, res) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/persons", morgan(morganConfPOST), (req, res) => {
+app.post("/api/persons", morgan(morganConfPOST), (req, res, next) => {
   const body = req.body;
   console.log("body=>", body);
 
@@ -76,9 +86,12 @@ app.post("/api/persons", morgan(morganConfPOST), (req, res) => {
     number: body.number,
   });
 
-  person.save().then((savedRecord) => {
-    res.json(savedRecord);
-  });
+  person
+    .save()
+    .then((savedRecord) => {
+      res.json(savedRecord);
+    })
+    .catch((error) => next(error));
 });
 
 app.put("/api/persons/:id", morgan(morganConfPOST), (req, res, next) => {
@@ -87,7 +100,11 @@ app.put("/api/persons/:id", morgan(morganConfPOST), (req, res, next) => {
     name: body.name,
     number: body.number,
   };
-  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+  Person.findByIdAndUpdate(req.params.id, person, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
     .then((updatedRecord) => {
       res.json(updatedRecord);
     })
