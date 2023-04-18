@@ -2,7 +2,6 @@ const express = require("express");
 const dotenv = require("dotenv");
 var morgan = require("morgan");
 const cors = require("cors");
-const mongoose = require("mongoose");
 const Person = require("./models/person");
 // const errorHandler = require("./middleware/errorHandler");
 dotenv.config();
@@ -24,7 +23,7 @@ const errorHandler = (error, req, res, next) => {
   if (error.name === "CastError") {
     return res.status(400).send({ ERROR: "malformatted id" });
   } else if (error.name === "ValidationError") {
-    return response.status(400).json({ error: error.message });
+    return res.status(400).json({ error: error.message });
   }
   next(error);
 };
@@ -64,7 +63,7 @@ app.get(
   }
 );
 
-app.delete("/api/persons/:id", (req, res) => {
+app.delete("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
     .then((result) => {
       res.status(204).end();
